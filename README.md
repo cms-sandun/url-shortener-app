@@ -10,7 +10,7 @@
 
 ### Run the project
 
-1. Clone both projects:
+1. Clone the project:
 
 git clone https://github.com/cms-sandun/url-shortener-app.git<br />
 
