@@ -1,0 +1,48 @@
+version: "3.1"
+services:
+  web:
+    container_name: web_container
+    build: url-shortener-web/
+    restart: always
+    ports:
+      - "8080:8080"
+    command: sh -c "npm run dev"
+    networks:
+      - my_network
+    env_file:
+      - .env.production
+  api:
+    container_name: api_container
+    build: url-shortener-api/
+    restart: always
+    ports:
+      - "3000:3000"
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+    env_file:
+      - url-shortener-api/.env.prod
+  db:
+    container_name: database_container
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: url_shortener_db
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: admin@123
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      - my_network
+networks:
+  my_network:

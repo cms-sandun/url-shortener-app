@@ -1,0 +1,19 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  schema   = "url_shortener_db"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model UrlEntry{
+  id  Int   @default(autoincrement()) @id
+  originalUrl String
+  shortUrlKey String
+  createdAt DateTime @default(now())
+}
