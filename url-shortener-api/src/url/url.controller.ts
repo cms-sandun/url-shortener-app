@@ -17,6 +17,14 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
   @Post()
   async create(@Body() createUrlEntityDto: CreateUrlEntityDto) {
+    const existingUrlEntity = this.urlService.findUrlEntiryByOriginalUrl(
+      createUrlEntityDto.url,
+    );
+
+    if (existingUrlEntity) {
+      return existingUrlEntity;
+    }
+
     const urlEntity = await this.urlService.create(createUrlEntityDto.url);
     return urlEntity;
   }

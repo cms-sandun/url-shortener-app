@@ -24,4 +24,12 @@ export class UrlService {
       },
     });
   }
+
+  async findUrlEntiryByOriginalUrl(originalUrl: string) {
+    return this.prismaService.urlEntry.findFirst({
+      where: {
+        originalUrl,
+      },
+    });
+  }
 }
