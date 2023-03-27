@@ -13,7 +13,8 @@ datasource db {
 
 model UrlEntry{
   id  Int   @default(autoincrement()) @id
-  originalUrl String
-  shortUrlKey String
+  originalUrl String  @unique
+  shortUrlKey String  @unique
+  clicks Int  @default(0)
   createdAt DateTime @default(now())
 }

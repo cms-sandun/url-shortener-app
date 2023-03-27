@@ -32,4 +32,17 @@ export class UrlService {
       },
     });
   }
+
+  async updateClicksCount(shortUrlKey: string) {
+    return this.prismaService.urlEntry.update({
+      where: {
+        shortUrlKey,
+      },
+      data: {
+        clicks: {
+          increment: 1,
+        },
+      },
+    });
+  }
 }

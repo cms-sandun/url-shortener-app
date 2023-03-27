@@ -17,7 +17,7 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
   @Post()
   async create(@Body() createUrlEntityDto: CreateUrlEntityDto) {
-    const existingUrlEntity = this.urlService.findUrlEntiryByOriginalUrl(
+    const existingUrlEntity = await this.urlService.findUrlEntiryByOriginalUrl(
       createUrlEntityDto.url,
     );
 
@@ -42,6 +42,9 @@ export class UrlController {
         'Invalid url provided. Please try with valid url',
       );
     }
+
+    // Update click count
+    await this.urlService.updateClicksCount(shortUrlKey);
 
     const originalUrl = url.originalUrl;
     return res.redirect(originalUrl as string);
