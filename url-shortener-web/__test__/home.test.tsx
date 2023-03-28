@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { url } from 'inspector';
 import { shortenUrl } from '../api/url-shortner';
 import Home from '../pages/index';
 

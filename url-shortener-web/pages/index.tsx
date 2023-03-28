@@ -5,6 +5,7 @@ import { shortenUrl } from '../api/url-shortner'
 import styles from '../styles/Home.module.css'
 import UrlEntiryProps from '../types/url-entity.type'
 import copy from 'copy-to-clipboard';
+import { url } from 'inspector'
 
 export default function Home() {
 
@@ -13,25 +14,37 @@ export default function Home() {
   const toast = useToast()
 
   const isValidHttpUrl = (url: string) => {
-    let currentUrl;
-    try {
-      currentUrl = new URL(url);
-    } catch (_) {
-      return false;
+    // Add http:// to the URL if it doesn't start with www or http
+    if (!url.startsWith("http")) {
+      url = "http://" + url;
     }
-    return currentUrl.protocol === "http:" || currentUrl.protocol === "https:";
+
+    // Regular expression to match URLs
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+    if (pattern.test(url)) {
+      return url
+    } else {
+      return false
+    }
   }
 
   const onSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault()
       const currentUrl = (e.currentTarget.elements.namedItem('inputLongUrl') as HTMLInputElement).value
-      if (!isValidHttpUrl(currentUrl)) {
+      const validUrl = isValidHttpUrl(currentUrl)
+      if (!validUrl) {
         setError("Invalid URL provided. Please follow this format. http(s)://www.example.com")
         return
       }
 
-      const response = await shortenUrl(currentUrl)
+      const response = await shortenUrl(validUrl)
       setUrls([...urls, response as UrlEntiryProps])
       setError(null)
     } catch (error: unknown) {
@@ -75,7 +88,7 @@ export default function Home() {
           </Alert>}
 
           <Flex flexDirection={'row'} mt={10}>
-            <Input color={'white'} data-testid='inputLongUrl' name='inputLongUrl' size={'lg'} w='600px' type="url" required placeholder='Example : http(s)://www.example.com'></Input>
+            <Input color={'white'} data-testid='inputLongUrl' name='inputLongUrl' size={'lg'} w='600px' type="input" required placeholder='Example : http(s)://www.example.com'></Input>
             <Button borderColor={'white'} data-testid='submitButton' size={'lg'} ml={3} type='submit' >Shorten</Button>
           </Flex>
         </form>
