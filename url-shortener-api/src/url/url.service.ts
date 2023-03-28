@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { getRandomString } from '../utils/random';
 import { UrlEntry } from '@prisma/client';
+import { CreateUrlEntityDto } from './dto/create-url-entity.dto';
 
 @Injectable()
 export class UrlService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(originalUrl: string): Promise<UrlEntry> {
+  async create(urlEntity: CreateUrlEntityDto): Promise<UrlEntry> {
     const shortUrlKey = getRandomString(10);
     return this.prismaService.urlEntry.create({
       data: {
         shortUrlKey,
-        originalUrl,
+        originalUrl: urlEntity.url,
+        expiryAt: urlEntity.expiryAt,
       },
     });
   }

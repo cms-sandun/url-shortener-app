@@ -16,5 +16,6 @@ model UrlEntry{
   originalUrl String  @unique
   shortUrlKey String  @unique
   clicks Int  @default(0)
+  expiryAt DateTime?
   createdAt DateTime @default(now())
 }
